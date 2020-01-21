@@ -24,8 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-SOURCES += \
-        main.cpp
+SOURCES +=
 
 HEADERS +=
 
@@ -41,4 +40,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     FFT.py \
     Main.py \
-    practice.py
+    Practice.py

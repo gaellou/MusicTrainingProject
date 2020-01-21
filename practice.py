@@ -1,95 +1,108 @@
-from PyQt5 import QtWidgets, uic
-from pyqtgraph import PlotWidget, plot
-import pyqtgraph as pg
-import sys  # We need sys so that we can pass argv to QApplication
-import os
+import sys
+import time
+import random
+import numpy as np
 
-class MainWindow(QtWidgets.QMainWindow):
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QAction, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QSpacerItem, QSizePolicy, QPushButton, QMessageBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize
 
-        #Load the UI Page
-        uic.loadUi('mainwindow.ui', self)
-
-        self.plot([1,2,3,4,5,6,7,8,9,10], [30,32,34,32,33,31,29,32,35,45])
-
-    def plot(self, hour, temperature):
-        self.graphWidget.plot(hour, temperature)
-
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
-    main.show()
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
+from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
+if is_pyqt5():
+    from matplotlib.backends.backend_qt5agg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+else:
+    from matplotlib.backends.backend_qt4agg import (
+        FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
+from matplotlib.figure import Figure
 
 
 
+class ApplicationWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(ApplicationWindow, self).__init__()
+
+        self._main = QtWidgets.QWidget()
+        self.setCentralWidget(self._main)
+        layoutV = QtWidgets.QVBoxLayout(self._main)
+        self.setWindowTitle("test")
+        self.setGeometry(20, 20, 1000, 1000)
+
+        self.statusBar().showMessage('Ready')  # Faire une barre de status
 
 
 
-    #bouton de la section de chauffe
-            buttonWarmTrumpet= QPushButton("Trompette", self)
-            buttonWarmTrumpet.move(100,400)
-            buttonWarmTrumpet.setFixedHeight(50)
-            buttonWarmTrumpet.setFixedWidth(125)
-            buttonWarmTrumpet.setStyleSheet("background-color: white")
-            buttonWarmTrumpet.hide()
-            buttonWarmTrumpet.clicked.connect(self.WarmUpClicked)
+        Boutongraph1 = QPushButton("Partition",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
+        layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
+        Boutongraph1.clicked.connect(self.plotImage)
+        Boutongraph2 = QPushButton("Courbe",self)
+        layoutV.addWidget(Boutongraph2)
+        Boutongraph2.clicked.connect(self.sinusoiddynamyque)
 
-            buttonWarmClarinet= QPushButton("Clarinette", self)
-            buttonWarmClarinet.move(440,400)
-            buttonWarmClarinet.setFixedHeight(50)
-            buttonWarmClarinet.setFixedWidth(125)
-            buttonWarmClarinet.setStyleSheet("background-color: white")
-            buttonWarmClarinet.hide()
-            buttonWarmClarinet.clicked.connect(self.WarmUpClicked)
+        Hlayout = QHBoxLayout() #creer un calque "honrizontal"
+        Hlayout.addWidget(Boutongraph1) # et ajoute lui un widget ici un bouton
+        Hlayout.addWidget(Boutongraph2) # et ajoutes lui un  2 ème bouton
 
-            buttonWarmFlute= QPushButton("Flûte", self)
-            buttonWarmFlute.move(800,400)
-            buttonWarmFlute.setFixedHeight(50)
-            buttonWarmFlute.setFixedWidth(125)
-            buttonWarmFlute.setStyleSheet("background-color: white")
-            buttonWarmFlute.hide()
-            buttonWarmFlute.clicked.connect(self.WarmUpClicked)
+        layoutV.addLayout(Hlayout)  # et ajoute le Hlayout dans le Layout vertical
 
-            buttonWarmViolin= QPushButton("Violon", self)
-            buttonWarmViolin.move(1210,400)
-            buttonWarmViolin.setFixedHeight(50)
-            buttonWarmViolin.setFixedWidth(125)
-            buttonWarmViolin.setStyleSheet("background-color: white")
-            buttonWarmViolin.hide()
-            buttonWarmUp.clicked.connect(self.WarmUpClicked)
+        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
+        layoutV.addWidget(static_canvas) # et mets le dans le layoutV
 
-            #bouton de la section entrainement
+        dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
+        layoutV.addWidget(dynamic_canvas) # et met le aussi dans le layoutV
+        ToolBar2 = NavigationToolbar(dynamic_canvas, self)
+        self.addToolBar(QtCore.Qt.BottomToolBarArea,ToolBar2)
+        layoutV.addWidget(ToolBar2) #et le met la NavigationToolbar sur le layout qui va bien
 
-            buttonPracticeTrumpet= QPushButton("Trompette", self)
-            buttonPracticeTrumpet.move(100,400)
-            buttonPracticeTrumpet.setFixedHeight(50)
-            buttonPracticeTrumpet.setFixedWidth(125)
-            buttonPracticeTrumpet.setStyleSheet("background-color: white")
-            buttonPracticeTrumpet.hide()
 
-            buttonPracticeClarinet= QPushButton("Clarinette", self)
-            buttonPracticeClarinet.move(440,400)
-            buttonPracticeClarinet.setFixedHeight(50)
-            buttonPracticeClarinet.setFixedWidth(125)
-            buttonPracticeClarinet.setStyleSheet("background-color: white")
-            buttonPracticeClarinet.hide()
 
-            buttonPracticeFlute= QPushButton("Flûte", self)
-            buttonPracticeFlute.move(800,400)
-            buttonPracticeFlute.setFixedHeight(50)
-            buttonPracticeFlute.setFixedWidth(125)
-            buttonPracticeFlute.setStyleSheet("background-color: white")
-            buttonPracticeFlute.hide()
+        self._static_ax = static_canvas.figure.add_subplot(111)  # cette ligne ne pouvais pas être mis dans la fonction graphstatic sinon le bouton n'afficher pas le graphique  ce sont les axes du premier canevas appeler static_canvas
 
-            buttonPracticeViolin= QPushButton("Violon", self)
-            buttonPracticeViolin.move(1210,400)
-            buttonPracticeViolin.setFixedHeight(50)
-            buttonPracticeViolin.setFixedWidth(125)
-            buttonPracticeViolin.setStyleSheet("background-color: white")
-            buttonPracticeViolin.hide()
+
+
+        self._dynamic_ax = dynamic_canvas.figure.add_subplot(111) # creer les axes du 2 ème canevas le canevas dynamique
+        #self._timer = dynamic_canvas.new_timer(100, [(self._update_canvas, (), {})])
+        #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
+
+
+    def graphstatic(self,static_canvas):  # il fallait aussi transmettre le 2 ème paramètre static_canvas à la fonction graphstatic
+        img = mpimg.imread('./Partition/Exo01_1.png')
+        print(img)
+        imgplot = plt.imshow(img)
+        self.axescanvas3.imshow(img)
+        self.axescanvas3.set_title('PyQt Matplotlib Example')
+        self.axescanvas3.figure.canvas.draw()
+
+    def sinusoiddynamyque(self):
+
+        testhopbof = FigureCanvas(Figure(figsize=(5, 3)))
+
+        self._timer = testhopbof.new_timer(100, [(self._update_canvas, (), {})])   #ne fonctionne pas car new_timer n'est pas détecté problème de portée ?
+        self._timer.start()
+
+
+    def _update_canvas(self):
+        self._dynamic_ax.clear()
+        t = np.linspace(0, 10, 101)
+        # Shift the sinusoid as a function of time.
+        self._dynamic_ax.plot(t, np.sin(t + time.time()))
+        self._dynamic_ax.figure.canvas.draw()
+
+    def plotImage(self,canvas3):
+        NomFichier = './IMAGE/Exercices/Ex11.png'
+        img = mpimg.imread(NomFichier)
+        print(img)
+        imgplot = plt.imshow(img)
+        self._static_ax .imshow(img)
+        self._static_ax.set_title('PyQt Matplotlib Example')
+        self._static_ax .figure.canvas.draw()
+
+
+if __name__ == "__main__":
+    qapp = QtWidgets.QApplication(sys.argv)
+    app = ApplicationWindow()
+    app.show()
+    qapp.exec_()

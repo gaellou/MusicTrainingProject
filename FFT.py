@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pyaudio
+import pyaudio as pyaudio
 import struct
 import matplotlib.pyplot as plt
 import numpy as np

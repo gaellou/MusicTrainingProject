@@ -24,13 +24,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-SOURCES +=
+SOURCES += \
+    solfege.cpp
 
-HEADERS +=
+HEADERS += \
+    solfege.h
 
 FORMS += \
         mainwindow.ui \
-    practicepage.ui
+    practicepage.ui \
+    solfege.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

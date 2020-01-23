@@ -14,58 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QRadioButton" name="CheckTrumpet">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>260</y>
-      <width>111</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Trumpet</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CheckFlute">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>260</y>
-      <width>111</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Flute</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CheckClarinet">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>260</y>
-      <width>111</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Clarinette</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CheckViolin">
-    <property name="geometry">
-     <rect>
-      <x>760</x>
-      <y>260</y>
-      <width>111</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Violon</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -77,6 +25,22 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>-18</x>
+      <y>-1</y>
+      <width>1691</width>
+      <height>751</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>IMAGE/fond.jpg</pixmap>
     </property>
    </widget>
   </widget>

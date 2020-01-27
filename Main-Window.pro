@@ -33,7 +33,9 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
     practicepage.ui \
-    solfege.ui
+    solfege.ui \
+    fourrier.ui \
+    son.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -43,4 +45,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     FFT.py \
     Main.py \
-    Practice.py
+    Practice.py \
+    font/Font.qml

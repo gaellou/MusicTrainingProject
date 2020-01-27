@@ -16,58 +16,20 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>-60</x>
-     <y>50</y>
-     <width>731</width>
-     <height>881</height>
+     <x>0</x>
+     <y>-20</y>
+     <width>1731</width>
+     <height>951</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>IMAGE/Solfege/memo_solfege.jpg</pixmap>
+    <pixmap>IMAGE/Solfege/Memo_Solfege.png</pixmap>
    </property>
    <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>120</y>
-     <width>591</width>
-     <height>251</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>IMAGE/Solfege/noms-des-notes-de-musique-2.jpg</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>810</x>
-     <y>-10</y>
-     <width>841</width>
-     <height>931</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>IMAGE/Solfege/nom-intervalles.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

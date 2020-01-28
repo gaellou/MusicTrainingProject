@@ -13,7 +13,7 @@ import time
 
 from scipy import signal
 import os
-%matplotlib tk
+
 
 def calcul_periodogramme1(x,Fe):
     ### périodogramme moyenné. Sections de 0.1 seconde
@@ -29,19 +29,20 @@ def calcul_periodogramme1(x,Fe):
 
 
 def affiche_perido():
-	RATE = 44100 
-	rate, data = io.read('TEST CLARINET.wav') ## importer le fichier son*
-	duree = 0.2
-	D =int (duree * RATE) #nb ech d'1 bloc
-	t_in1 =1 
-	n1 = int(t_in1*RATE)
-	CHUNK1 = data[n1:(n1+D),0]
-	freq , periodo1 = calcul_periodogramme1(CHUNK1, RATE) 
-	plt.figure(figsize= (15,10))
-	plt.plot(freq, periodo1)
-	plt.xlim(0,250)
-	plt.ylim(-150,150)
-	return 0
+
+    RATE = 44100
+    rate, data = io.read('Sound/TEST CLARINET.wav') ## importer le fichier son
+    duree = 0.2
+    D =int (duree * RATE) #nb ech d'1 bloc
+    t_in1 =1
+    n1 = int(t_in1*RATE)
+    CHUNK1 = data[n1:(n1+D),0]
+    freq , periodo1 = calcul_periodogramme1(CHUNK1, RATE)
+    plt.figure(figsize= (15,10))
+    plt.plot(freq, periodo1)
+    plt.xlim(0,250)
+    plt.ylim(-150,150)
+    return periodo1
 
 
 

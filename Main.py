@@ -28,6 +28,7 @@ else:
 from matplotlib.figure import Figure
 import sqlite3
 
+from periodo import *
 
 class SonWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -77,9 +78,9 @@ class PhysicWindow(QtWidgets.QMainWindow):
         Instlayout.addWidget(buttonFourrier)
 
         layoutV.addLayout(Instlayout)
-        Boutongraph1 = QPushButton("Partition",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
+        Boutongraph1 = QPushButton("Periodogramme",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
         layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
-        Boutongraph1.clicked.connect(self.plotImage)
+        Boutongraph1.clicked.connect(self.plotPeriodo)
         Boutongraph2 = QPushButton("Courbe",self)
         layoutV.addWidget(Boutongraph2)
         Boutongraph2.clicked.connect(self.sinusoiddynamyque)
@@ -93,6 +94,11 @@ class PhysicWindow(QtWidgets.QMainWindow):
         static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
         layoutV.addWidget(static_canvas) # et mets le dans le layoutV
 
+        ToolBar1= NavigationToolbar(static_canvas, self)
+
+        self.addToolBar(ToolBar1) # ajoutes lui aussi une barre de navigation
+
+        layoutV.addWidget(ToolBar1)  # et met la NavigationToolbar sur le layout qui va bien
         dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
         layoutV.addWidget(dynamic_canvas) # et met le aussi dans le layoutV
         ToolBar2 = NavigationToolbar(dynamic_canvas, self)
@@ -133,14 +139,10 @@ class PhysicWindow(QtWidgets.QMainWindow):
         self._dynamic_ax.plot(t, np.sin(t + time.time()))
         self._dynamic_ax.figure.canvas.draw()
 
-    def plotImage(self,canvas3):
-        NomFichier = './IMAGE/Exercices/Ex12.png'
-        img = mpimg.imread(NomFichier)
-        #print(img)
-        imgplot = plt.imshow(img)
-        self._static_ax .imshow(img)
-        self._static_ax.set_title('PyQt Matplotlib Example')
-        self._static_ax .figure.canvas.draw()
+    def plotPeriodo(self,canvas3):
+        data = affiche_perido()
+        self._static_ax.plot(data)
+        self._static_ax.figure.canvas.draw()
 
     def SonClicked(self) :
 

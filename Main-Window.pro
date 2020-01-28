@@ -28,7 +28,8 @@ SOURCES += \
     solfege.cpp
 
 HEADERS += \
-    solfege.h
+    solfege.h \
+    mainwindow.h
 
 FORMS += \
         mainwindow.ui \
@@ -46,4 +47,11 @@ DISTFILES += \
     FFT.py \
     Main.py \
     Practice.py \
-    font/Font.qml
+    font/Font.qml \
+    periodo.py \
+    metronome.py \
+    Metronome/metronome.py \
+    Metronome/putch.py \
+    Metronome/switch.py \
+    metronome.py \
+    Metronome.py

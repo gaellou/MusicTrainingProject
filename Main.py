@@ -30,8 +30,11 @@ import sqlite3
 
 from periodo import *
 
+<<<<<<< HEAD
 from enregistrement_static import *
 
+=======
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
 
 class RecordWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -50,7 +53,11 @@ class RecordWindow(QtWidgets.QMainWindow):
         buttonRecord01.setStyleSheet("background-color: white")
         buttonRecord01.clicked.connect(self.Record01Clicked)
 
+<<<<<<< HEAD
         buttonRecord02= QPushButton("Enregistrer second son", self)
+=======
+        buttonRecord02= QPushButton("Enregistrer premier son", self)
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
         layoutV.addWidget(buttonRecord02)
         buttonRecord02.setStyleSheet("background-color: white")
         buttonRecord02.clicked.connect(self.Record02Clicked)
@@ -62,6 +69,7 @@ class RecordWindow(QtWidgets.QMainWindow):
 
         layoutV.addLayout(Instlayout)
 
+<<<<<<< HEAD
         buttonListen01= QPushButton("Encouter premier son", self)
         layoutV.addWidget(buttonListen01)
         buttonListen01.setStyleSheet("background-color: white")
@@ -87,6 +95,14 @@ class RecordWindow(QtWidgets.QMainWindow):
         Boutongraph2 = QPushButton("Periodogramme 02",self)
         layoutV.addWidget(Boutongraph2)
         Boutongraph2.clicked.connect(self.plotPeriodo02)
+=======
+        Boutongraph1 = QPushButton("Periodogramme 01",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
+        layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
+        Boutongraph1.clicked.connect(self.plotImage)
+        Boutongraph2 = QPushButton("Periodogramme 02",self)
+        layoutV.addWidget(Boutongraph2)
+        Boutongraph2.clicked.connect(self.sinusoiddynamyque)
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
 
         Hlayout = QHBoxLayout() #creer un calque "honrizontal"
         Hlayout.addWidget(Boutongraph1) # et ajoute lui un widget ici un bouton
@@ -94,7 +110,10 @@ class RecordWindow(QtWidgets.QMainWindow):
 
         layoutV.addLayout(Hlayout)  # et ajoute le Hlayout dans le Layout vertical
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
         static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
         layoutV.addWidget(static_canvas) # et mets le dans le layoutV
 
@@ -115,6 +134,7 @@ class RecordWindow(QtWidgets.QMainWindow):
         #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
 
 
+<<<<<<< HEAD
 
 
     def plotPeriodo01(self,canvas3):
@@ -131,10 +151,44 @@ class RecordWindow(QtWidgets.QMainWindow):
 
 
 
+=======
+    def graphstatic(self,static_canvas):  # il fallait aussi transmettre le 2 ème paramètre static_canvas à la fonction graphstatic
+        img = mpimg.imread('./Partition/Exo01_1.png')
+        print(img)
+        imgplot = plt.imshow(img)
+        self.axescanvas3.imshow(img)
+        self.axescanvas3.set_title('PyQt Matplotlib Example')
+        self.axescanvas3.figure.canvas.draw()
+
+    def sinusoiddynamyque(self):
+
+        testhopbof = FigureCanvas(Figure(figsize=(5, 3)))
+
+        self._timer = testhopbof.new_timer(100, [(self._update_canvas, (), {})])   #ne fonctionne pas car new_timer n'est pas détecté problème de portée ?
+        self._timer.start()
+
+
+    def _update_canvas(self):
+        self._dynamic_ax.clear()
+        t = np.linspace(0, 10, 101)
+        # Shift the sinusoid as a function of time.
+        self._dynamic_ax.plot(t, np.sin(t + time.time()))
+        self._dynamic_ax.figure.canvas.draw()
+
+    def plotImage(self,canvas3):
+        NomFichier = './IMAGE/Exercices/Ex12.png'
+        img = mpimg.imread(NomFichier)
+        #print(img)
+        imgplot = plt.imshow(img)
+        self._static_ax .imshow(img)
+        self._static_ax.set_title('PyQt Matplotlib Example')
+        self._static_ax .figure.canvas.draw()
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
 
     def Record01Clicked(self) :
 
         print("Record1")
+<<<<<<< HEAD
         enregistrer_static("File01",3)
 
     def Record02Clicked(self) :
@@ -146,6 +200,11 @@ class RecordWindow(QtWidgets.QMainWindow):
     def Listen02Clicked(self) :
         pass
 
+=======
+
+    def Record02Clicked(self) :
+        print("Record1")
+>>>>>>> 204116cda598bfa8ff29871c5436017df1050ac4
 
 
 
@@ -745,6 +804,7 @@ class MainWindow(QtWidgets.QMainWindow):
         buttonOnde.setFixedWidth(125)
         buttonOnde.setStyleSheet("background-color: white")
         buttonOnde.clicked.connect(self.OndeClicked)
+
 
 
 

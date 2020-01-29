@@ -46,7 +46,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     FFT.py \
     Main.py \
-    Practice.py \
     font/Font.qml \
     periodo.py \
     metronome.py \
@@ -54,4 +53,8 @@ DISTFILES += \
     Metronome/putch.py \
     Metronome/switch.py \
     metronome.py \
-    Metronome.py
+    DataGeneration.py \
+    Instruments.py \
+    Exercices.py \
+    enregistrement_statik.py \
+    enregistrement_static.py

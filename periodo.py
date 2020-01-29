@@ -28,10 +28,10 @@ def calcul_periodogramme1(x,Fe):
     return(f,B)
 
 
-def affiche_perido():
+def affiche_perido(Fichier):
 
     RATE = 44100
-    rate, data = io.read('Sound/TEST CLARINET.wav') ## importer le fichier son
+    rate, data = io.read(Fichier) ## importer le fichier son
     duree = 0.2
     D =int (duree * RATE) #nb ech d'1 bloc
     t_in1 =1

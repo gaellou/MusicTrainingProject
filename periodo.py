@@ -44,9 +44,7 @@ def Affiche_periodo_et_harmoniques(fileName, freq_min_recherche,freq_max_recherc
     m = np.argmax(periodo2)
     print('TRACE OK')
     A = []
-    for k in range (20):
-        plt.axvline(x=m*k, c='r',label = 'fondamental à {}'.format(m), linestyle = '-.')
-        plt.scatter(m*k,periodo1[m*k], s=100, c= 'g')
+
     return (freq , periodo1)
 
 

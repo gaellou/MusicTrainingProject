@@ -7,14 +7,13 @@ import os
 from pydub import AudioSegment
 from pydub.playback import play
 
+from periodo import *
+
 REP_exos = "./exos/"
 REP_wav = "./wav/"
-LILYPOND ='/Applications/LilyPond.app/Contents/Resources/bin/lilypond '
+LILYPOND ='/usr/bin/lilypond --png '
 RATE = 44100
 DIAPASON = 440   ### provisoire
-
-FminRECHERCHE=120
-FmaxRECHERCHE=300
 
 
 ###### fonctions de base pour synthétiser un son, convertir en wav
@@ -35,8 +34,9 @@ def SonSimple(f0,duree_note):   ### duree_note en secondes
     return np.cos(2*(np.pi)*f0*t)*2* np.sin(t*(np.pi)/duree_note)
 
 
+
 def GenererSignal(liste_indice_note,rythme,tempo, diapason): ### liste_note en Hz et rythme notation anglaise
-    #### conversion en Hertz 
+    #### conversion en Hertz
     a=2**(1/12)
     indices=np.array(liste_indice_note)
     liste_note =diapason*(a**indices)
@@ -58,8 +58,9 @@ def GenererSignal(liste_indice_note,rythme,tempo, diapason): ### liste_note en H
     time = np.arange(0,somme_duree_note,te)
     return x_total
 
+
 def karaoke(liste_note, liste_duree,tempo):
-    liste_note = creation_liste_note(220,liste_note)
+    #liste_note = creation_liste_note(220,liste_note)
     duree_total = sum(liste_duree)*RATE
     kara = []
     FreqNOIRE = tempo/60 #Hz
@@ -70,11 +71,9 @@ def karaoke(liste_note, liste_duree,tempo):
         print(liste_duree[k]*d_NOIRE)
     return kara
 
-
 def CreerFichier(FileName ,liste_indice,rythme,tempo,diapason):
     x = GenererSignal(liste_indice,rythme,tempo, diapason);
     ConvertirWav(FileName,x)
-
 
 def JouerWav(fileName):
     song = AudioSegment.from_wav(REP_wav+fileName)
@@ -101,12 +100,13 @@ class Exercices:
     Activite = "activité"
     Tempo = 60
 
-    def ChargerExercice(exo) : #Quel type prendra transpositon ?ù
+    def ChargerExercice(exo) : #Génère les fichiers liers aux exercices
         nom_exercice = exo.Nom
         activite = exo.Activite
         tempo = exo.Tempo
         os.chdir(REP_exos)
-        if os.path.isfile(nom_exercice+'_prov.ly'):
+        print(nom_exercice)
+        if os.path.isfile( nom_exercice +'_prov.ly'):
             os.remove(nom_exercice+'_prov.ly')
         if os.path.isfile(nom_exercice+'_prov-unnamed-staff.notes'):
             os.remove(nom_exercice+'_prov-unnamed-staff.notes')
@@ -116,7 +116,7 @@ class Exercices:
         os.system('cp ' +nom_exercice+ '.ly '+nom_exercice+'_prov.ly')
 
 ########  On transpose 
-        fichier = open(nom_exercice+'_prov.ly','a') ####### l'option 'a' : append 
+        fichier = open(nom_exercice+'_prov.ly','a') ####### l'option 'a' : append
 
 ### on choisit de transposer du do (c) à une autre note 
 ### on choisit cette dernière au hasard (on monte d'un eoctave éventuellement)
@@ -154,14 +154,10 @@ class Exercices:
         indices = indices-69
         os.chdir('./../')
         #### ici : créer un fichier .wav
-        creer_fichier(nom_exercice+'.wav' ,indices,rythme,tempo,DIAPASON)
-        #### on estime la frequence haute de l'exo et la frequence basse
-        a=2**(1/12)
-        indices=np.array(indices)
-        liste_noteInf = diapason*(a**(indices-2))
-        liste_noteSup = diapason*(a**(indices+2))    
-        return(np.min(liste_noteInf) , np.max(liste_noteSup))
-        
+        CreerFichier(nom_exercice+'.wav' ,indices,rythme,tempo,DIAPASON)
+        Nom_Image =  './exos/' + nom_exercice +'_prov.png'
+        Nom_Son =  nom_exercice+'.wav'
+        return(Nom_Image,Nom_Son,indices,rythme)
         
 ###########################################
 
@@ -172,4 +168,9 @@ class Exercices:
     def AfficherExercice(exo) :
         pass
         #CODE
+
+
+exercice1=Exercices()
+exercice1.Nom='exercice1'
+Exercices.ChargerExercice(exercice1)
 

@@ -13,6 +13,7 @@ import pyaudio
 import wave
 import time
 from random import *
+import math as math
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -35,6 +36,108 @@ from periodo import *
 
 from enregistrement_static import *
 from creation_sons_exos import *
+
+class Ondewindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(Ondewindow, self).__init__()
+        self._main = QtWidgets.QWidget()
+        self.setCentralWidget(self._main)
+        layoutV = QtWidgets.QVBoxLayout(self._main)
+        self.setWindowTitle("Entrainement")
+        self.setGeometry(20, 20, 1000, 1000)
+
+        self.statusBar().showMessage('Ready')  # Faire une barre de status
+
+
+
+
+        buttonRecord01= QPushButton("Enregistrer", self)
+        layoutV.addWidget(buttonRecord01)
+        buttonRecord01.setStyleSheet("background-color: white")
+        buttonRecord01.clicked.connect(self.Record01Clicked)
+
+        Instlayout = QHBoxLayout() #creer un calque "honrizontal"
+        Instlayout.addWidget(buttonRecord01) # et ajoute lui un widget ici un bouton
+
+
+
+        layoutV.addLayout(Instlayout)
+        Boutongraph1 = QPushButton("Periodogramme",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
+        layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
+        Boutongraph1.clicked.connect(self.plotPeriodo01)
+
+        Hlayout = QHBoxLayout() #creer un calque "honrizontal"
+        Hlayout.addWidget(Boutongraph1) # et ajoute lui un widget ici un bouton
+
+
+        layoutV.addLayout(Hlayout)  # et ajoute le Hlayout dans le Layout vertical
+
+
+
+        buttonListen01= QPushButton("Forme d'Onde", self)
+        layoutV.addWidget(buttonListen01)
+        buttonListen01.setStyleSheet("background-color: white")
+        buttonListen01.clicked.connect(self.FormeOnde)
+
+
+
+        Hlayout02 = QHBoxLayout() #creer un calque "honrizontal"
+        Hlayout02.addWidget(buttonListen01) # et ajoute lui un widget ici un bouton
+
+
+
+        layoutV.addLayout(Hlayout02)
+
+
+
+        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
+        layoutV.addWidget(static_canvas) # et mets le dans le layoutV
+        ToolBar1 = NavigationToolbar(static_canvas, self)
+        self.addToolBar(QtCore.Qt.BottomToolBarArea,ToolBar1)
+        layoutV.addWidget(ToolBar1)
+
+        dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
+        layoutV.addWidget(dynamic_canvas) # et met le aussi dans le layoutV
+        ToolBar2 = NavigationToolbar(dynamic_canvas, self)
+        self.addToolBar(QtCore.Qt.BottomToolBarArea,ToolBar2)
+        layoutV.addWidget(ToolBar2) #et le met la NavigationToolbar sur le layout qui va bien
+
+
+
+        self._static_ax = static_canvas.figure.add_subplot(111)  # cette ligne ne pouvais pas être mis dans la fonction graphstatic sinon le bouton n'afficher pas le graphique  ce sont les axes du premier canevas appeler static_canvas
+
+
+
+        self._dynamic_ax = dynamic_canvas.figure.add_subplot(111) # creer les axes du 2 ème canevas le canevas dynamique
+        #self._timer = dynamic_canvas.new_timer(100, [(self._update_canvas, (), {})])
+        #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
+
+
+    def plotPeriodo01(self,canvas3):
+        Fichier01 = "./wav/File01ONDE.wav"
+        freq,data = Affiche_periodo_et_harmoniques(Fichier01, 100,2000)
+        self._static_ax.plot(freq, data)
+        self._static_ax.figure.canvas.draw()
+
+
+
+
+
+
+
+    def Record01Clicked(self) :
+        time.sleep(2)
+        print("Record : Play")
+        enregistrer_static("File01ONDE.wav",3)
+        print('Record OK')
+
+
+
+    def FormeOnde(self) :
+        data = declancheur_seuil(15,'./wav/File01ONDE.wav')
+        self._dynamic_ax.plot(data)
+        self._dynamic_ax.figure.canvas.draw()
+
 
 class RecordWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -100,6 +203,10 @@ class RecordWindow(QtWidgets.QMainWindow):
 
         static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
         layoutV.addWidget(static_canvas) # et mets le dans le layoutV
+        ToolBar1 = NavigationToolbar(static_canvas, self)
+        self.addToolBar(QtCore.Qt.BottomToolBarArea,ToolBar1)
+        layoutV.addWidget(ToolBar1)
+
 
 
         dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
@@ -119,13 +226,13 @@ class RecordWindow(QtWidgets.QMainWindow):
         #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
     def plotPeriodo01(self,canvas3):
         Fichier01 = "./wav/File01Record.wav"
-        freq,data = Affiche_periodo_et_harmoniques(Fichier01, 100,2000)
+        freq,data = Affiche_periodo_et_harmoniques(Fichier01, 150,500)
         self._static_ax.plot(freq, data)
         self._static_ax.figure.canvas.draw()
 
     def plotPeriodo02(self,canvas3):
         Fichier02 = "./wav/File02Record.wav"
-        freq, data = Affiche_periodo_et_harmoniques(Fichier02, 100,2000)
+        freq, data = Affiche_periodo_et_harmoniques(Fichier02, 150,500)
         self._dynamic_ax.plot(freq, data)
         self._dynamic_ax.figure.canvas.draw()
 
@@ -369,7 +476,7 @@ class TraningWindow(QtWidgets.QMainWindow):
         exercice=Exercices()
         num = randint(1,2)
         exercice.Nom='exercice'+str(num)
-        imgName,sound = Exercices.ChargerExercice(exercice)
+        imgName,sound, Notes, Rythmes = Exercices.ChargerExercice(exercice)
         img = mpimg.imread(imgName)
         #print(img)
         imgplot = plt.imshow(img)
@@ -378,11 +485,9 @@ class TraningWindow(QtWidgets.QMainWindow):
         self._static_ax .figure.canvas.draw()
         Exercices.JouerExercice(exercice)
 
-
-
-
-
-
+        dataExo = karaoke(Notes, Rythmes, 60)
+        self._dynamic_ax.plot(dataExo)
+        self._dynamic_ax.figure.canvas.draw()
 
     def Record01Clicked(self) :
         time.sleep(2)
@@ -393,7 +498,10 @@ class TraningWindow(QtWidgets.QMainWindow):
 
 
     def Evaluate(self) :
-        pass
+        Data = declancheur_seuil(15,'./wav/Exe.wav')
+        Dataplot = Data
+        self._dynamic_ax.plot(Dataplot)
+        self._dynamic_ax.figure.canvas.draw()
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):

@@ -12,6 +12,7 @@ import time
 #from pydub.playback import play
 from scipy import signal
 import os
+import math as math
 
 from periodo import *
 ################
@@ -37,26 +38,38 @@ def convertir_wav(name_file,signal,rate):
     scaled = np.round(32767*signal)
     signal = scaled.astype(np.int16)
     io.write(name_file, rate, signal)
-    
+
 def enregistrer_static(namefile,temps_acquisition):
     total_data = []
     p = pyaudio.PyAudio()
-    #data du micro
+        #data du micro
+
     stream = p.open(
-        format = FORMAT ,
-        channels = CHANNELS,
-        rate = RATE,
-        input= True,
-        output = True,
-        frames_per_buffer=CHUNK)
+
+    format = FORMAT ,
+
+    channels = CHANNELS,
+
+    rate = RATE,
+
+    input= True,
+
+    output = True,
+
+    frames_per_buffer=CHUNK)
+
     for k in range(10*temps_acquisition):
+
         data = stream.read(CHUNK)#data en binaire
+
         data_int = np.array(struct.unpack(str(2*CHUNK)+ 'B', data),dtype='b')[::2] -127 /128
+
         total_data = np.append(total_data,data_int)
     t = np.arange(0,temps_acquisition,Te)
-    convertir_wav(namefile,total_data,RATE)
-    return total_data
 
+    convertir_wav(namefile,total_data,RATE)
+
+    return total_data
 
 
 def Energie(x):
@@ -64,6 +77,7 @@ def Energie(x):
     for k in range(len(x)-1):
         E+=(x[k]**2)
     return 10*np.log10(E/len(x))
+
 
 def declancheur_seuil(SEUIL,namefile):
     marche = False
@@ -88,4 +102,5 @@ def declancheur_seuil(SEUIL,namefile):
         if ((marche ==True) and (NRJ<2*SEUIL/3)):
             convertir_wav(namefile,total_data,RATE)
             return (total_data)
+
 

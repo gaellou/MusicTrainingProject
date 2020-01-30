@@ -7,13 +7,14 @@ import os
 from pydub import AudioSegment
 from pydub.playback import play
 
-from periodo import *
-
 REP_exos = "./exos/"
 REP_wav = "./wav/"
-LILYPOND ='/usr/bin/lilypond --png '
+LILYPOND ='/Applications/LilyPond.app/Contents/Resources/bin/lilypond '
 RATE = 44100
 DIAPASON = 440   ### provisoire
+
+FminRECHERCHE=120
+FmaxRECHERCHE=300
 
 
 ###### fonctions de base pour synthétiser un son, convertir en wav
@@ -87,13 +88,12 @@ class Exercices:
     Activite = "activité"
     Tempo = 60
 
-    def ChargerExercice(exo) : #Génère les fichiers liers aux exercices
+    def ChargerExercice(exo) : #Quel type prendra transpositon ?ù
         nom_exercice = exo.Nom
         activite = exo.Activite
         tempo = exo.Tempo
         os.chdir(REP_exos)
-        print(nom_exercice)
-        if os.path.isfile( nom_exercice +'_prov.ly'):
+        if os.path.isfile(nom_exercice+'_prov.ly'):
             os.remove(nom_exercice+'_prov.ly')
         if os.path.isfile(nom_exercice+'_prov-unnamed-staff.notes'):
             os.remove(nom_exercice+'_prov-unnamed-staff.notes')
@@ -103,7 +103,7 @@ class Exercices:
         os.system('cp ' +nom_exercice+ '.ly '+nom_exercice+'_prov.ly')
 
 ########  On transpose 
-        fichier = open(nom_exercice+'_prov.ly','a') ####### l'option 'a' : append
+        fichier = open(nom_exercice+'_prov.ly','a') ####### l'option 'a' : append 
 
 ### on choisit de transposer du do (c) à une autre note 
 ### on choisit cette dernière au hasard (on monte d'un eoctave éventuellement)
@@ -141,10 +141,14 @@ class Exercices:
         indices = indices-69
         os.chdir('./../')
         #### ici : créer un fichier .wav
-        CreerFichier(nom_exercice+'.wav' ,indices,rythme,tempo,DIAPASON)
-        Nom_Image =  './exos/' + nom_exercice +'_prov.png'
-        Nom_Son =  nom_exercice+'.wav'
-        return(Nom_Image,Nom_Son)
+        creer_fichier(nom_exercice+'.wav' ,indices,rythme,tempo,DIAPASON)
+        #### on estime la frequence haute de l'exo et la frequence basse
+        a=2**(1/12)
+        indices=np.array(indices)
+        liste_noteInf = diapason*(a**(indices-2))
+        liste_noteSup = diapason*(a**(indices+2))    
+        return(np.min(liste_noteInf) , np.max(liste_noteSup))
+        
         
 ###########################################
 
@@ -155,9 +159,4 @@ class Exercices:
     def AfficherExercice(exo) :
         pass
         #CODE
-
-
-exercice1=Exercices()
-exercice1.Nom='exercice1'
-Exercices.ChargerExercice(exercice1)
 

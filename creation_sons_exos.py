@@ -58,6 +58,19 @@ def GenererSignal(liste_indice_note,rythme,tempo, diapason): ### liste_note en H
     time = np.arange(0,somme_duree_note,te)
     return x_total
 
+def karaoke(liste_note, liste_duree,tempo):
+    liste_note = creation_liste_note(220,liste_note)
+    duree_total = sum(liste_duree)*RATE
+    kara = []
+    FreqNOIRE = tempo/60 #Hz
+    d_NOIRE = 1/FreqNOIRE
+    for k in range (len(liste_duree)):
+        for i in range(int(liste_duree[k]*d_NOIRE*20)):
+            kara.append(liste_note[k])
+        print(liste_duree[k]*d_NOIRE)
+    return kara
+
+
 def CreerFichier(FileName ,liste_indice,rythme,tempo,diapason):
     x = GenererSignal(liste_indice,rythme,tempo, diapason);
     ConvertirWav(FileName,x)

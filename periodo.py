@@ -14,35 +14,40 @@ import time
 from scipy import signal
 import os
 
-
-def calcul_periodogramme1(x,Fe):
+def calcul_periodogramme2(x,Fe,duree_sous_bloc):
     ### périodogramme moyenné. Sections de 0.1 seconde
     N=len(x)
-   # N1=int(np.floor(Fe))
-   # K=int(np.floor(N))
-    w=signal.hamming(N)
-    b = w* x
+    N1=int(np.floor(duree_sous_bloc*Fe))
+    K=int(np.floor(N/N1))
+    w=signal.hamming(N1)
+    ind1 = 0
+    ind2 = N1-1
+    b = w*x[ind1:(ind2+1)]
     f, B = signal.periodogram(b, Fe,nfft =44100)
-    B = B/N
+    B=B/N1
+    while ind2+N1<N:
+        ind1=ind1+N1
+        ind2=ind2+N1
+        b=w*x[ind1:(ind2+1)]
+        f, aux = signal.periodogram(b, Fe, nfft =44100)
+        B=B+aux/N1
+    B=B/K
     B=10*np.log10(B)
     return(f,B)
 
 
-def affiche_perido(Fichier):
-
-    RATE = 44100
-    rate, data = io.read(Fichier) ## importer le fichier son
-    duree = 0.2
-    D =int (duree * RATE) #nb ech d'1 bloc
-    t_in1 =1
-    n1 = int(t_in1*RATE)
-    CHUNK1 = data[n1:(n1+D),0]
-    freq , periodo1 = calcul_periodogramme1(CHUNK1, RATE)
-    plt.figure(figsize= (15,10))
-    plt.plot(freq, periodo1)
-    plt.xlim(0,250)
-    plt.ylim(-150,150)
-    return periodo1
+def Affiche_periodo_et_harmoniques(fileName, freq_min_recherche,freq_max_recherche):
+    rate, data = io.read(fileName) ## importer le fichier son*
+    freq , periodo1 = calcul_periodogramme2(data, 44100, 0.05)
+    cond = (freq >freq_min_recherche) * (freq <freq_max_recherche)
+    periodo2 = (periodo1+200)*cond
+    m = np.argmax(periodo2)
+    print('TRACE OK')
+    A = []
+    for k in range (20):
+        plt.axvline(x=m*k, c='r',label = 'fondamental à {}'.format(m), linestyle = '-.')
+        plt.scatter(m*k,periodo1[m*k], s=100, c= 'g')
+    return (freq , periodo1)
 
 
 

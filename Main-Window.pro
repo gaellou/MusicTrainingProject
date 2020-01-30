@@ -57,4 +57,5 @@ DISTFILES += \
     Instruments.py \
     Exercices.py \
     enregistrement_statik.py \
-    enregistrement_static.py
+    enregistrement_static.py \
+    creation_sons_exos.py

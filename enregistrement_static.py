@@ -12,6 +12,8 @@ import time
 #from pydub.playback import play
 from scipy import signal
 import os
+
+from periodo import *
 ################
 dureeChunk = 0.1
 RATE = 44100   #frequence d'échantillonage
@@ -54,3 +56,36 @@ def enregistrer_static(namefile,temps_acquisition):
     t = np.arange(0,temps_acquisition,Te)
     convertir_wav(namefile,total_data,RATE)
     return namefile
+
+
+
+def Energie(x):
+    E = 0
+    for k in range(len(x)-1):
+        E+=(x[k]**2)
+    return 10*np.log10(E/len(x))
+
+def declancheur_seuil(SEUIL,namefile):
+    marche = False
+    total_data = []
+    p = pyaudio.PyAudio()
+    #data du micro
+    stream = p.open(
+        format = FORMAT ,
+        channels = CHANNELS,
+        rate = RATE,
+        input= True,
+        output = True,
+        frames_per_buffer=CHUNK)
+    while True:
+        data = stream.read(CHUNK)#data en binaire
+        data_int = np.array(struct.unpack(str(2*CHUNK)+ 'B', data),dtype='b')[::2] -127 /128
+        NRJ = Energie(data_int)
+        print(NRJ)
+        if (NRJ>SEUIL):
+            total_data = np.append(total_data,data_int)
+            marche = True
+        if ((marche ==True) and (NRJ<2*SEUIL/3)):
+            file(namefile,total_data,RATE)
+            return (total_data)
+

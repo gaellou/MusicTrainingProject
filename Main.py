@@ -9,7 +9,10 @@ import numpy as np
 import sys
 import time
 import random
-
+import pyaudio
+import wave
+import time
+from random import *
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -31,7 +34,7 @@ import sqlite3
 from periodo import *
 
 from enregistrement_static import *
-
+from creation_sons_exos import *
 
 class RecordWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -40,7 +43,7 @@ class RecordWindow(QtWidgets.QMainWindow):
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
         layoutV = QtWidgets.QVBoxLayout(self._main)
-        self.setWindowTitle("Entrainement")
+        self.setWindowTitle("Enregistrement")
         self.setGeometry(20, 20, 1000, 1000)
 
         self.statusBar().showMessage('Ready')  # Faire une barre de status
@@ -98,6 +101,7 @@ class RecordWindow(QtWidgets.QMainWindow):
         static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
         layoutV.addWidget(static_canvas) # et mets le dans le layoutV
 
+
         dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
         layoutV.addWidget(dynamic_canvas) # et met le aussi dans le layoutV
         ToolBar2 = NavigationToolbar(dynamic_canvas, self)
@@ -113,165 +117,39 @@ class RecordWindow(QtWidgets.QMainWindow):
         self._dynamic_ax = dynamic_canvas.figure.add_subplot(111) # creer les axes du 2 ème canevas le canevas dynamique
         #self._timer = dynamic_canvas.new_timer(100, [(self._update_canvas, (), {})])
         #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
-
-
-
-
     def plotPeriodo01(self,canvas3):
-        Fichier01 = "File01"
-        data = affiche_perido(Fichier01)
-        self._static_ax.plot(data)
+        Fichier01 = "./wav/File01Record.wav"
+        freq,data = Affiche_periodo_et_harmoniques(Fichier01, 100,2000)
+        self._static_ax.plot(freq, data)
         self._static_ax.figure.canvas.draw()
 
     def plotPeriodo02(self,canvas3):
-        Fichier02 = "File02"
-        data = affiche_perido(Fichier02)
-        self._dynamic_ax.plot(data)
+        Fichier02 = "./wav/File02Record.wav"
+        freq, data = Affiche_periodo_et_harmoniques(Fichier02, 100,2000)
+        self._dynamic_ax.plot(freq, data)
         self._dynamic_ax.figure.canvas.draw()
 
 
 
 
     def Record01Clicked(self) :
-
-        print("Record1")
-        enregistrer_static("File01",3)
+        time.sleep(3)
+        print("Record1 : PLAY")
+        enregistrer_static("./wav/File01Record.wav",2)
+        print('Record 01 : OK')
 
     def Record02Clicked(self) :
-        print("Record1")
-        enregistrer_static("File02",3)
+        time.sleep(3)
+        print("Record2 : PLAY")
+        enregistrer_static("./wav/File02Record.wav",2)
+        print('Record 02 : OK')
 
     def Listen01Clicked(self) :
+        JouerWav('File01Record.wav')
+
         pass
     def Listen02Clicked(self) :
-        pass
-
-
-
-
-class ApplicationWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
-        super(ApplicationWindow, self).__init__()
-
-        self._main = QtWidgets.QWidget()
-        self.setCentralWidget(self._main)
-        layoutV = QtWidgets.QVBoxLayout(self._main)
-        self.setWindowTitle("Chauffe")
-        self.setGeometry(20, 20, 1000, 1000)
-
-        self.statusBar().showMessage('Ready')  # Faire une barre de status
-
-        buttonFlute= QPushButton("Flute", self)
-        layoutV.addWidget(buttonFlute)
-        buttonFlute.setStyleSheet("background-color: white")
-        buttonFlute.clicked.connect(self.FluteClicked)
-
-        buttonTrumpet= QPushButton("Trompette", self)
-        layoutV.addWidget(buttonTrumpet)
-        buttonTrumpet.setStyleSheet("background-color: white")
-        buttonTrumpet.clicked.connect(self.TrumpetClicked)
-
-        buttonViolin= QPushButton("Violin", self)
-        layoutV.addWidget(buttonViolin)
-        buttonViolin.setStyleSheet("background-color: white")
-        buttonViolin.clicked.connect(self.ViolinClicked)
-
-        buttonClarinet= QPushButton("Clarinette", self)
-        layoutV.addWidget(buttonClarinet)
-        buttonClarinet.setStyleSheet("background-color: white")
-        buttonClarinet.clicked.connect(self.ClarinetClicked)
-
-        Instlayout = QHBoxLayout() #creer un calque "honrizontal"
-        Instlayout.addWidget(buttonTrumpet) # et ajoute lui un widget ici un bouton
-        Instlayout.addWidget(buttonFlute)
-        Instlayout.addWidget(buttonViolin)
-        Instlayout.addWidget(buttonClarinet)
-
-        layoutV.addLayout(Instlayout)
-        Boutongraph1 = QPushButton("Partition",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
-        layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
-        Boutongraph1.clicked.connect(self.plotImage)
-        Boutongraph2 = QPushButton("Courbe",self)
-        layoutV.addWidget(Boutongraph2)
-        Boutongraph2.clicked.connect(self.sinusoiddynamyque)
-
-        Hlayout = QHBoxLayout() #creer un calque "honrizontal"
-        Hlayout.addWidget(Boutongraph1) # et ajoute lui un widget ici un bouton
-        Hlayout.addWidget(Boutongraph2) # et ajoutes lui un  2 ème bouton
-
-        layoutV.addLayout(Hlayout)  # et ajoute le Hlayout dans le Layout vertical
-
-        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
-        layoutV.addWidget(static_canvas) # et mets le dans le layoutV
-
-        dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un 2 ème canevas
-        layoutV.addWidget(dynamic_canvas) # et met le aussi dans le layoutV
-        ToolBar2 = NavigationToolbar(dynamic_canvas, self)
-        self.addToolBar(QtCore.Qt.BottomToolBarArea,ToolBar2)
-        layoutV.addWidget(ToolBar2) #et le met la NavigationToolbar sur le layout qui va bien
-
-
-
-        self._static_ax = static_canvas.figure.add_subplot(111)  # cette ligne ne pouvais pas être mis dans la fonction graphstatic sinon le bouton n'afficher pas le graphique  ce sont les axes du premier canevas appeler static_canvas
-
-
-
-        self._dynamic_ax = dynamic_canvas.figure.add_subplot(111) # creer les axes du 2 ème canevas le canevas dynamique
-        #self._timer = dynamic_canvas.new_timer(100, [(self._update_canvas, (), {})])
-        #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
-
-
-    def graphstatic(self,static_canvas):  # il fallait aussi transmettre le 2 ème paramètre static_canvas à la fonction graphstatic
-        img = mpimg.imread('./Partition/Exo01_1.png')
-        print(img)
-        imgplot = plt.imshow(img)
-        self.axescanvas3.imshow(img)
-        self.axescanvas3.set_title('PyQt Matplotlib Example')
-        self.axescanvas3.figure.canvas.draw()
-
-    def sinusoiddynamyque(self):
-
-        testhopbof = FigureCanvas(Figure(figsize=(5, 3)))
-
-        self._timer = testhopbof.new_timer(100, [(self._update_canvas, (), {})])   #ne fonctionne pas car new_timer n'est pas détecté problème de portée ?
-        self._timer.start()
-
-
-    def _update_canvas(self):
-        self._dynamic_ax.clear()
-        t = np.linspace(0, 10, 101)
-        # Shift the sinusoid as a function of time.
-        self._dynamic_ax.plot(t, np.sin(t + time.time()))
-        self._dynamic_ax.figure.canvas.draw()
-
-    def plotImage(self,canvas3):
-        NomFichier = './IMAGE/Exercices/Ex12.png'
-        img = mpimg.imread(NomFichier)
-        #print(img)
-        imgplot = plt.imshow(img)
-        self._static_ax .imshow(img)
-        self._static_ax.set_title('PyQt Matplotlib Example')
-        self._static_ax .figure.canvas.draw()
-
-    def TrumpetClicked(self) :
-
-
-        print("Instrument : Trompette")
-
-    def FluteClicked(self) :
-
-
-        print("Instrument : Flute")
-    def ViolinClicked(self) :
-
-
-        print("Instrument : Violon")
-    def ClarinetClicked(self) :
-
-
-        print("Instrument : Clarinette")
-
-
+        JouerWav('File02Record.wav')
 
 
 class SonWindow(QtWidgets.QMainWindow):
@@ -419,7 +297,6 @@ class SolfegeWindow(QtWidgets.QMainWindow):
 class TraningWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(TraningWindow, self).__init__()
-
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
         layoutV = QtWidgets.QVBoxLayout(self._main)
@@ -428,46 +305,45 @@ class TraningWindow(QtWidgets.QMainWindow):
 
         self.statusBar().showMessage('Ready')  # Faire une barre de status
 
-        buttonFlute= QPushButton("Flute", self)
-        layoutV.addWidget(buttonFlute)
-        buttonFlute.setStyleSheet("background-color: white")
-        buttonFlute.clicked.connect(self.FluteClicked)
-
-        buttonTrumpet= QPushButton("Trompette", self)
-        layoutV.addWidget(buttonTrumpet)
-        buttonTrumpet.setStyleSheet("background-color: white")
-        buttonTrumpet.clicked.connect(self.TrumpetClicked)
-
-        buttonViolin= QPushButton("Violin", self)
-        layoutV.addWidget(buttonViolin)
-        buttonViolin.setStyleSheet("background-color: white")
-        buttonViolin.clicked.connect(self.ViolinClicked)
-
-        buttonClarinet= QPushButton("Clarinette", self)
-        layoutV.addWidget(buttonClarinet)
-        buttonClarinet.setStyleSheet("background-color: white")
-        buttonClarinet.clicked.connect(self.ClarinetClicked)
-
-        Instlayout = QHBoxLayout() #creer un calque "honrizontal"
-        Instlayout.addWidget(buttonTrumpet) # et ajoute lui un widget ici un bouton
-        Instlayout.addWidget(buttonFlute)
-        Instlayout.addWidget(buttonViolin)
-        Instlayout.addWidget(buttonClarinet)
-
-        layoutV.addLayout(Instlayout)
-
-        Boutongraph1 = QPushButton("Partition",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
+        Boutongraph1 = QPushButton("Générer un exercice",self) # creer un bouton à l'écran oK mais cela ne dit pas ou
         layoutV.addWidget(Boutongraph1) # ce bouton met le dans le calque layoutV maintenant je sais ou est le bouton
-        Boutongraph1.clicked.connect(self.plotImage)
-        Boutongraph2 = QPushButton("Courbe",self)
-        layoutV.addWidget(Boutongraph2)
-        Boutongraph2.clicked.connect(self.sinusoiddynamyque)
+        Boutongraph1.clicked.connect(self.plotPeriodo01)
 
         Hlayout = QHBoxLayout() #creer un calque "honrizontal"
         Hlayout.addWidget(Boutongraph1) # et ajoute lui un widget ici un bouton
-        Hlayout.addWidget(Boutongraph2) # et ajoutes lui un  2 ème bouton
+
 
         layoutV.addLayout(Hlayout)  # et ajoute le Hlayout dans le Layout vertical
+
+
+
+        buttonRecord01= QPushButton("Enregistrer", self)
+        layoutV.addWidget(buttonRecord01)
+        buttonRecord01.setStyleSheet("background-color: white")
+        buttonRecord01.clicked.connect(self.Record01Clicked)
+
+        Instlayout = QHBoxLayout() #creer un calque "honrizontal"
+        Instlayout.addWidget(buttonRecord01) # et ajoute lui un widget ici un bouton
+
+
+
+        layoutV.addLayout(Instlayout)
+
+        buttonListen01= QPushButton("Evaluer", self)
+        layoutV.addWidget(buttonListen01)
+        buttonListen01.setStyleSheet("background-color: white")
+        buttonListen01.clicked.connect(self.Evaluate)
+
+
+
+        Hlayout02 = QHBoxLayout() #creer un calque "honrizontal"
+        Hlayout02.addWidget(buttonListen01) # et ajoute lui un widget ici un bouton
+
+
+
+        layoutV.addLayout(Hlayout02)
+
+
 
         static_canvas = FigureCanvas(Figure(figsize=(5, 3)))  # creer un canevas
         layoutV.addWidget(static_canvas) # et mets le dans le layoutV
@@ -489,51 +365,35 @@ class TraningWindow(QtWidgets.QMainWindow):
         #self._timer.start()   # fonctionne mais sans le déclenchement du bouton
 
 
-    def graphstatic(self,static_canvas):  # il fallait aussi transmettre le 2 ème paramètre static_canvas à la fonction graphstatic
-        img = mpimg.imread('./Partition/Exo01_1.png')
-        print(img)
-        imgplot = plt.imshow(img)
-        self.axescanvas3.imshow(img)
-        self.axescanvas3.set_title('PyQt Matplotlib Example')
-        self.axescanvas3.figure.canvas.draw()
-
-    def sinusoiddynamyque(self):
-
-        testhopbof = FigureCanvas(Figure(figsize=(5, 3)))
-
-        self._timer = testhopbof.new_timer(100, [(self._update_canvas, (), {})])   #ne fonctionne pas car new_timer n'est pas détecté problème de portée ?
-        self._timer.start()
-
-
-    def _update_canvas(self):
-        self._dynamic_ax.clear()
-        t = np.linspace(0, 10, 101)
-        # Shift the sinusoid as a function of time.
-        self._dynamic_ax.plot(t, np.sin(t + time.time()))
-        self._dynamic_ax.figure.canvas.draw()
-
-    def plotImage(self,canvas3):
-        NomFichier = './IMAGE/Exercices/Ex12.png'
-        img = mpimg.imread(NomFichier)
+    def plotPeriodo01(self,canvas3):
+        exercice=Exercices()
+        num = randint(1,2)
+        exercice.Nom='exercice'+str(num)
+        imgName,sound = Exercices.ChargerExercice(exercice)
+        img = mpimg.imread(imgName)
         #print(img)
         imgplot = plt.imshow(img)
         self._static_ax .imshow(img)
-        self._static_ax.set_title('PyQt Matplotlib Example')
+        self._static_ax.set_title('Exercice')
         self._static_ax .figure.canvas.draw()
+        Exercices.JouerExercice(exercice)
 
-    def TrumpetClicked(self) :
 
-        print("Instrument : Trompette")
 
-    def FluteClicked(self) :
 
-        print("Instrument : Flute")
-    def ViolinClicked(self) :
 
-        print("Instrument : Violon")
-    def ClarinetClicked(self) :
 
-        print("Instrument : Clarinette")
+
+    def Record01Clicked(self) :
+        time.sleep(2)
+        print("Record : Play")
+        enregistrer_static("File01.wav",5)
+        print('Record OK')
+
+
+
+    def Evaluate(self) :
+        pass
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):

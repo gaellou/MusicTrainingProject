@@ -41,11 +41,9 @@ def Affiche_periodo_et_harmoniques(fileName, freq_min_recherche,freq_max_recherc
     freq , periodo1 = calcul_periodogramme2(data, 44100, 0.05)
     cond = (freq >freq_min_recherche) * (freq <freq_max_recherche)
     periodo2 = (periodo1+200)*cond
-    m = np.argmax(periodo2)
+    pitch = np.argmax(periodo2)
     print('TRACE OK')
-    A = []
-
-    return (freq , periodo1)
+    return (freq , periodo1 , pitch )
 
 
 

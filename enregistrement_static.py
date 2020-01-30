@@ -55,7 +55,7 @@ def enregistrer_static(namefile,temps_acquisition):
         total_data = np.append(total_data,data_int)
     t = np.arange(0,temps_acquisition,Te)
     convertir_wav(namefile,total_data,RATE)
-    return namefile
+    return total_data
 
 
 
@@ -86,6 +86,6 @@ def declancheur_seuil(SEUIL,namefile):
             total_data = np.append(total_data,data_int)
             marche = True
         if ((marche ==True) and (NRJ<2*SEUIL/3)):
-            file(namefile,total_data,RATE)
+            convertir_wav(namefile,total_data,RATE)
             return (total_data)
 

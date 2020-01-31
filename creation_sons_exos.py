@@ -157,7 +157,11 @@ class Exercices:
         CreerFichier(nom_exercice+'.wav' ,indices,rythme,tempo,DIAPASON)
         Nom_Image =  './exos/' + nom_exercice +'_prov.png'
         Nom_Son =  nom_exercice+'.wav'
-        return(Nom_Image,Nom_Son,indices,rythme)
+        a=2**(1/12)
+        indices=np.array(indices)
+        liste_noteInf = diapason*(a**(indices-2))
+        liste_noteSup = diapason*(a**(indices+2))    
+        return(Nom_Image,Nom_Son,indices,rythme,np.min(liste_noteInf) , np.max(liste_noteSup))
         
 ###########################################
 

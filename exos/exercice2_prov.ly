@@ -18,4 +18,4 @@ global = {
 
 notes = \relative do' {\global do2 mi    }
 
-\transpose do lad'{\clef alto \notes}
+\transpose do si'{\clef alto \notes}

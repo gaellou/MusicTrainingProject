@@ -41,21 +41,34 @@ def Affiche_periodo_et_harmoniques(fileName, freq_min_recherche,freq_max_recherc
     freq , periodo1 = calcul_periodogramme2(data, 44100, 0.05)
     cond = (freq >freq_min_recherche) * (freq <freq_max_recherche)
     periodo2 = (periodo1+200)*cond
-    pitch = np.argmax(periodo2)
+    m = np.argmax(periodo2)
+    periodo1[0] = 0
     print('TRACE OK')
-    return (freq , periodo1 , pitch )
 
-def pitch_statique_dans_time(fileName,  freq_min_recherche,freq_max_recherche):
+    return (freq[0:10000] , periodo1[0:10000])
+
+def Eval_Exo(fileName,  freq_min_recherche,freq_max_recherche):
     rate, data = io.read(fileName) ## importer le fichier son
     duree_enregistrement = len(data)
-    taille_CHUNK = int(duree_enregistrement/20)
-    pitch = np.zeros(21)
-    for k in range (20):
-        freq , periodo1 = calcul_periodogramme2(data[k*taille_CHUNK:(k+1)*taille_CHUNK], 44100, 0.05)
+    taille_CHUNK = int(duree_enregistrement/80)
+    pitch = np.zeros(81)
+    for k in range (80):
+        freq , periodo1 = calcul_periodogramme2(data[k*taille_CHUNK:(k+1)*taille_CHUNK], 44100, 0.03)
         cond = (freq >freq_min_recherche) * (freq <freq_max_recherche)
         periodo2 = (periodo1+200)*cond
         pitch[k] = np.argmax(periodo2)
     return pitch
 
+def Eval_Fond(fileName,  freq_min_recherche,freq_max_recherche):
+    rate, data = io.read(fileName) ## importer le fichier son
+    duree_enregistrement = len(data)
+    taille_CHUNK = int(duree_enregistrement/80)
 
+    freq , periodo1 = calcul_periodogramme2(data[10*taille_CHUNK:20*taille_CHUNK], 44100, 0.03)
+    cond = (freq >freq_min_recherche) * (freq <freq_max_recherche)
+
+    periodo2 = (periodo1+200)*cond
+
+    pitch = np.argmax(periodo2)
+    return pitch
 
